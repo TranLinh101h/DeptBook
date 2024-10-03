@@ -1,4 +1,5 @@
 import 'package:dept_book/business_logic.dart';
+import 'package:dept_book/main.dart';
 import 'package:dept_book/model.dart';
 import 'package:dept_book/screen/add_expense_section.dart';
 import 'package:dept_book/screen/build_drawer.dart';
@@ -12,6 +13,7 @@ class ExpenseTracker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var homeController = Get.find<HomeController>();
     return Scaffold(
       appBar: AppBar(
         title: Text('Quản lý chi tiêu'),
@@ -24,43 +26,98 @@ class ExpenseTracker extends StatelessWidget {
           ),
         ],
       ),
-      drawer: BuildDrawer(
-          expenseController:
-              expenseController), // Menu Drawer hiển thị danh sách người
-      body: Column(
+      drawer: BuildDrawer(expenseController: expenseController),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showModalBottomSheet(
+            barrierColor: Colors.transparent,
+            context: context,
+            builder: (context) => FractionallySizedBox(
+              heightFactor: 0.8, // Chiều cao nửa màn hình
+              child: AddExpenseSection(
+                expenseController: expenseController,
+              ), // Thành phần thêm chi tiêu
+            ),
+          );
+        },
+        backgroundColor: homeController.colorApp.value, // Màu nền hiện đại
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15), // Bo góc nút cho mềm mại
+        ),
+        elevation: 8, // Đổ bóng tạo chiều sâu
+        splashColor: Colors.tealAccent, // Hiệu ứng gợn sóng khi nhấn
+        child: Icon(
+          Icons.attach_money,
+          size: 30, // Kích thước biểu tượng lớn để dễ nhìn
+          color: Colors.white, // Màu biểu tượng
+        ),
+        tooltip: 'Thêm chi tiêu', // Tooltip khi giữ nút
+      ), // Menu Drawer hiển thị danh sách người
+      body: Stack(
         children: [
-          Expanded(
-            child: Obx(() {
-              if (expenseController.people.isEmpty) {
-                return const Center(
-                  child: Text(
-                    "Không có người dùng, nhấn + để thêm.",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                );
-              }
+          Obx(() {
+            String link = expenseController.linkImage.value;
 
-              return ListView.builder(
-                itemCount: expenseController.people.length,
-                itemBuilder: (context, index) {
-                  var person = expenseController.people[index];
-                  return Card(
-                    child: ListTile(
-                      title: Text(person.name),
-                      subtitle:
-                          Text('Số dư: ${person.balance.toStringAsFixed(2)}'),
-                      onTap: () {
-                        // Mở chi tiết chi tiêu của người này
-                        Get.to(PersonDetailScreen(personId: person.id));
-                      },
-                    ),
-                  );
-                },
+            if (link.isNotEmpty) {
+              return SizedBox.expand(
+                child: Image.network(
+                  expenseController.linkImage.value,
+                  fit: BoxFit.cover,
+                ),
               );
-            }),
+            }
+            return SizedBox();
+          }),
+          Column(
+            children: [
+              Expanded(
+                child: Obx(() {
+                  if (expenseController.people.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        "Không có người dùng, nhấn + để thêm.",
+                        style: TextStyle(
+                            color: Colors.blue, fontWeight: FontWeight.bold),
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
+                    itemCount: expenseController.people.length,
+                    itemBuilder: (context, index) {
+                      var person = expenseController.people[index];
+                      return Card(
+                        color: Colors.white.withOpacity(0.6),
+                        child: ListTile(
+                          title: Text(person.name),
+                          subtitle: Text(
+                              'Số dư: ${person.balance.toStringAsFixed(2)}'),
+                          onTap: () {
+                            // Mở chi tiết chi tiêu của người này
+                            Get.to(
+                                () => PersonDetailScreen(personId: person.id));
+                          },
+                        ),
+                      );
+                    },
+                  );
+                }),
+              ),
+              Container(
+                margin: EdgeInsets.all(10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Ver 1.0.2 Patch3",
+                      style: TextStyle(
+                          color: Colors.blue, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              )
+            ],
           ),
-          AddExpenseSection(
-              expenseController: expenseController), // Thành phần thêm chi tiêu
         ],
       ),
     );

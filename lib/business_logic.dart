@@ -3,6 +3,7 @@ import 'package:dept_book/storage_mananger.dart';
 import 'package:get/get.dart';
 
 class ExpenseController extends GetxController {
+  var linkImage = "".obs;
   var people = <Person>[].obs;
   final StorageManager storageManager = StorageManager();
   static const String _peopleKey = "people_data";
@@ -11,6 +12,11 @@ class ExpenseController extends GetxController {
   void onInit() {
     super.onInit();
     loadPeopleData();
+  }
+
+  updateLink(String link) {
+    linkImage.value = link;
+    storageManager.saveData("linkImage", link);
   }
 
   Future<void> savePeopleData() async {
@@ -24,6 +30,7 @@ class ExpenseController extends GetxController {
     if (storedPeople != null) {
       people.addAll(storedPeople);
     }
+    linkImage.value = storageManager.getData("linkImage") ?? '';
   }
 
   void addPerson(Person person) {
@@ -64,7 +71,9 @@ class ExpenseController extends GetxController {
 
   void deleteExpense(String personId, String expenseId) {
     var person = people.firstWhere((p) => p.id == personId);
-    person.expenses.removeWhere((e) => e.id == expenseId);
+    var expense = person.expenses.firstWhere((e) => e.id == expenseId);
+    person.balance -= expense.amount;
+    person.expenses.remove(expense);
     savePeopleData();
     people.refresh();
   }

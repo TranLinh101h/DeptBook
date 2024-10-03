@@ -19,23 +19,32 @@ class AddExpenseSection extends StatelessWidget {
     final TextEditingController _expenseController = TextEditingController();
     var _selectedPeople = <String>[].obs;
 
-    return Padding(
+    return Container(
       padding: const EdgeInsets.all(16.0),
-      child: Column(
+      child: ListView(
         children: [
           TextField(
+            style: TextStyle(fontWeight: FontWeight.bold),
+            onTapOutside: (event) =>
+                FocusManager.instance.primaryFocus?.unfocus(),
             controller: _descriptionController,
-            decoration: InputDecoration(labelText: 'Mô tả chi tiêu'),
+            decoration: InputDecoration(
+              labelText: 'Mô tả chi tiêu',
+            ),
           ),
           TextField(
+            style: TextStyle(fontWeight: FontWeight.bold),
+            onTapOutside: (event) =>
+                FocusManager.instance.primaryFocus?.unfocus(),
             controller: _expenseController,
             decoration: InputDecoration(labelText: 'Số tiền'),
             keyboardType: TextInputType.number,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
           Text('Chọn người chia sẻ chi tiêu:'),
           Obx(() {
             return Wrap(
+              alignment: WrapAlignment.center,
               spacing: 5,
               children: expenseController.people.map((person) {
                 return ChoiceChip(
@@ -57,7 +66,10 @@ class AddExpenseSection extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               onAdd(
-                  _descriptionController, _expenseController, _selectedPeople);
+                _descriptionController,
+                _expenseController,
+                _selectedPeople,
+              );
             },
             child: Text('Thêm chi tiêu'),
           ),

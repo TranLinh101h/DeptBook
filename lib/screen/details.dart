@@ -2,7 +2,6 @@ import 'package:dept_book/business_logic.dart';
 import 'package:dept_book/model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:uuid/uuid.dart';
 
 class PersonDetailScreen extends StatelessWidget {
   final String personId;
@@ -12,37 +11,65 @@ class PersonDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var person = expenseController.people.firstWhere((p) => p.id == personId);
+    var indexPerson =
+        expenseController.people.indexWhere((p) => p.id == personId);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chi tiết chi tiêu: ${person.name}'),
+        title: Text(
+            'Chi tiết chi tiêu: ${expenseController.people.value[indexPerson].name}'),
       ),
-      body: Column(
-        children: [
-          Expanded(
-              child: ListView.builder(
-            itemCount: person.expenses.length,
-            itemBuilder: (context, index) {
-              var expense = person.expenses[index];
-              return Card(
-                child: ListTile(
-                  title: Text(expense.description),
-                  subtitle:
-                      Text('Số tiền: ${expense.amount.toStringAsFixed(2)}'),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () =>
-                        expenseController.deleteExpense(person.id, expense.id),
+      body: Obx(
+        () => Stack(
+          children: [
+            Obx(() {
+              String link = expenseController.linkImage.value;
+
+              if (link.isNotEmpty) {
+                return SizedBox.expand(
+                  child: Image.network(
+                    expenseController.linkImage.value,
+                    fit: BoxFit.cover,
                   ),
-                  onTap: () {
-                    _showEditExpenseDialog(context, person.id, expense);
+                );
+              }
+              return SizedBox();
+            }),
+            Column(
+              children: [
+                Expanded(
+                    child: ListView.builder(
+                  itemCount: expenseController
+                      .people.value[indexPerson].expenses.length,
+                  itemBuilder: (context, index) {
+                    var expense = expenseController
+                        .people.value[indexPerson].expenses[index];
+                    return Card(
+                      color: Colors.white.withOpacity(0.6),
+                      child: ListTile(
+                        title: Text(expense.description),
+                        subtitle: Text(
+                            'Số tiền: ${expense.amount.toStringAsFixed(2)}'),
+                        trailing: IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () => expenseController.deleteExpense(
+                              expenseController.people.value[indexPerson].id,
+                              expense.id),
+                        ),
+                        onTap: () {
+                          _showEditExpenseDialog(
+                              context,
+                              expenseController.people.value[indexPerson].id,
+                              expense);
+                        },
+                      ),
+                    );
                   },
-                ),
-              );
-            },
-          )),
-        ],
+                )),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
