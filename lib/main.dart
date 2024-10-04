@@ -1,4 +1,6 @@
+import 'package:dept_book/model.dart';
 import 'package:dept_book/screen/expense_tracker.dart';
+import 'package:dept_book/storage_mananger.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
@@ -35,7 +37,21 @@ class MyApp extends StatelessWidget {
 }
 
 class HomeController extends GetxController {
+  final StorageManager storageManager = StorageManager();
   var colorApp = (Colors.teal as Color).obs;
+  var indexColor = 0.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    indexColor.value = storageManager.getData("indexColor") ?? 0;
+    changeColor(modernColors[indexColor.value]);
+  }
 
   changeColor(Color color) => colorApp.value = color;
+
+  updateIndexColor(int index) {
+    indexColor.value = index;
+    storageManager.saveData("indexColor", index);
+  }
 }

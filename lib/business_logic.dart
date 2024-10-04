@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 class ExpenseController extends GetxController {
   var linkImage = "".obs;
+  
   var people = <Person>[].obs;
   final StorageManager storageManager = StorageManager();
   static const String _peopleKey = "people_data";
@@ -13,6 +14,8 @@ class ExpenseController extends GetxController {
     super.onInit();
     loadPeopleData();
   }
+
+
 
   updateLink(String link) {
     linkImage.value = link;
@@ -31,6 +34,7 @@ class ExpenseController extends GetxController {
       people.addAll(storedPeople);
     }
     linkImage.value = storageManager.getData("linkImage") ?? '';
+  
   }
 
   void addPerson(Person person) {

@@ -1,7 +1,8 @@
 import 'package:dept_book/business_logic.dart';
 import 'package:dept_book/main.dart';
 import 'package:dept_book/model.dart';
-import 'package:dept_book/screen/add_link.dart';
+import 'package:dept_book/screen/widgets/add_link.dart';
+import 'package:dept_book/shore_bird_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,6 +17,8 @@ class BuildDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var shoreBird = Get.put(ShoreBirdService());
+
     return Drawer(
       child: Column(
         children: [
@@ -54,6 +57,7 @@ class BuildDrawer extends StatelessWidget {
               ],
             ),
           ),
+          //
           Container(
             margin: EdgeInsets.only(bottom: 20),
             height: 100,
@@ -64,12 +68,18 @@ class BuildDrawer extends StatelessWidget {
                 onPressed: () {
                   var contrOller = Get.find<HomeController>();
                   contrOller.changeColor(modernColors[index]);
+                  contrOller.updateIndexColor(index);
                 },
                 child: Container(
                   margin: EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
-                      color: modernColors[index],
-                      borderRadius: BorderRadius.circular(20)),
+                    color: modernColors[index],
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      width: 2,
+                      color: Colors.white,
+                    ),
+                  ),
                   width: 80,
                   height: 80,
                 ),
@@ -111,26 +121,3 @@ class BuildDrawer extends StatelessWidget {
     );
   }
 }
-
-//
-List<Color> modernColors = [
-  Colors.blue, // #2196F3
-  Colors.teal, // #009688
-  Colors.deepPurple, // #673AB7
-  Colors.amber, // #FFC107
-  Colors.lightGreen, // #8BC34A
-  Colors.indigo, // #3F51B5
-  Colors.orange, // #FF9800
-  Colors.pink, // #E91E63
-  Colors.lime, // #CDDC39
-  Colors.cyan, // #00BCD4
-  Colors.grey, // #9E9E9E
-  Colors.brown, // #795548
-  Colors.red, // #F44336
-  Colors.purple, // #9C27B0
-  Colors.green, // #4CAF50
-  Colors.white, // #FFFFFF
-  Color(0xFF6A5ACD), // Slate Blue
-  Color(0xFF2E8B57), // Sea Green
-  Color(0xFFFF7F50), // Coral
-];

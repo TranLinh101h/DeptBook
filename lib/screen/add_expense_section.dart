@@ -62,7 +62,14 @@ class AddExpenseSection extends StatelessWidget {
               }).toList(),
             );
           }),
-          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: Divider(
+              thickness: 1,
+              color: Theme.of(context).drawerTheme.backgroundColor,
+            ),
+          ),
+          const SizedBox(height: 30),
           ElevatedButton(
             onPressed: () {
               onAdd(
@@ -72,6 +79,13 @@ class AddExpenseSection extends StatelessWidget {
               );
             },
             child: Text('Thêm chi tiêu'),
+          ),
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text('Thoát'),
           ),
         ],
       ),
