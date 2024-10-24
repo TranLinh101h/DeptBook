@@ -20,6 +20,7 @@ class ExpenseTracker extends StatelessWidget {
     shoreBird.checkForUpdate(context, showError: false);
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text('Quản lý chi tiêu'),
         actions: [
@@ -169,11 +170,10 @@ class ExpenseTracker extends StatelessWidget {
 
   void _showBottomSheet(BuildContext context) {
     showModalBottomSheet(
-      isDismissible: false,
       barrierColor: Colors.transparent,
       context: context,
       builder: (context) => FractionallySizedBox(
-        heightFactor: 1.5, // Chiều cao nửa màn hình
+        heightFactor: 0.99, // Chiều cao nửa màn hình
         child: Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.only(

@@ -4,38 +4,58 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
 
-class AddExpenseSection extends StatelessWidget {
-  const AddExpenseSection({
-    super.key,
-    required this.expenseController,
-  });
-
+class AddExpenseSection extends StatefulWidget {
   final ExpenseController expenseController;
+
+  const AddExpenseSection({
+    Key? key,
+    required this.expenseController,
+  }) : super(key: key);
+
+  @override
+  _AddExpenseSectionState createState() => _AddExpenseSectionState();
+}
+
+class _AddExpenseSectionState extends State<AddExpenseSection> {
+  late TextEditingController _descriptionController;
+  late TextEditingController _expenseController;
+  var _selectedPeople = <String>[].obs;
+
+  @override
+  void initState() {
+    super.initState();
+    _descriptionController = TextEditingController();
+    _expenseController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _descriptionController.dispose();
+    _expenseController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _descriptionController =
-        TextEditingController();
-    final TextEditingController _expenseController = TextEditingController();
-    var _selectedPeople = <String>[].obs;
-
     return Container(
       padding: const EdgeInsets.all(16.0),
       child: ListView(
         children: [
-          TextField(
+          TextFormField(
             style: TextStyle(fontWeight: FontWeight.bold),
-            onTapOutside: (event) =>
-                FocusManager.instance.primaryFocus?.unfocus(),
+            onTapOutside: (event) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            },
             controller: _descriptionController,
             decoration: InputDecoration(
               labelText: 'Mô tả chi tiêu',
             ),
           ),
-          TextField(
+          TextFormField(
             style: TextStyle(fontWeight: FontWeight.bold),
-            onTapOutside: (event) =>
-                FocusManager.instance.primaryFocus?.unfocus(),
+            onTapOutside: (event) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            },
             controller: _expenseController,
             decoration: InputDecoration(labelText: 'Số tiền'),
             keyboardType: TextInputType.number,
@@ -46,7 +66,7 @@ class AddExpenseSection extends StatelessWidget {
             return Wrap(
               alignment: WrapAlignment.center,
               spacing: 5,
-              children: expenseController.people.map((person) {
+              children: widget.expenseController.people.map((person) {
                 return ChoiceChip(
                   label: Text(person.name),
                   selected: _selectedPeople.value.contains(person.name),
@@ -93,9 +113,10 @@ class AddExpenseSection extends StatelessWidget {
   }
 
   void onAdd(
-      TextEditingController _descriptionController,
-      TextEditingController _expenseController,
-      RxList<String> _selectedPeople) {
+    TextEditingController _descriptionController,
+    TextEditingController _expenseController,
+    RxList<String> _selectedPeople,
+  ) {
     if (_descriptionController.text.isNotEmpty &&
         _expenseController.text.isNotEmpty &&
         _selectedPeople.value.isNotEmpty) {
@@ -105,19 +126,18 @@ class AddExpenseSection extends StatelessWidget {
 
       // Thêm chi tiêu cho từng người được chọn
       for (var personName in _selectedPeople.value) {
-        var person =
-            expenseController.people.firstWhere((p) => p.name == personName);
+        var person = widget.expenseController.people
+            .firstWhere((p) => p.name == personName);
         var expense = Expense(
           id: Uuid().v4(),
           description: _descriptionController.text,
           amount: splitAmount,
         );
-        expenseController.addExpenseToPerson(person.id, expense);
+        widget.expenseController.addExpenseToPerson(person.id, expense);
       }
 
       _descriptionController.clear();
       _expenseController.clear();
-      _selectedPeople.clear();
     }
   }
 }
