@@ -7,7 +7,6 @@ import 'package:dept_book/screen/details.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
-
 import '../shore_bird_service.dart';
 
 class ExpenseTracker extends StatelessWidget {
@@ -96,7 +95,7 @@ class ExpenseTracker extends StatelessWidget {
                     children: [
                       Obx(
                         () => Text(
-                          "V1.0.3 Patch ${shoreBird.currentPatchVersion.value}",
+                          "V1.0.4 Patch ${shoreBird.currentPatchVersion.value}",
                           style: TextStyle(
                               color: Colors.blue, fontWeight: FontWeight.bold),
                         ),
@@ -118,35 +117,35 @@ class ExpenseTracker extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         //CHECK UPDATE
-        Container(
-          margin: EdgeInsets.only(bottom: 10),
-          child: Obx(
-            () => shoreBird.isShorebirdAvailable.value
-                ? FloatingActionButton(
-                    tooltip: 'Check update',
-                    onPressed: () => shoreBird.isCheckingForUpdate.value
-                        ? null
-                        : shoreBird.checkForUpdate(context),
-                    backgroundColor:
-                        homeController.colorApp.value, // Màu nền hiện đại
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(15), // Bo góc nút cho mềm mại
-                    ),
-                    elevation: 8, // Đổ bóng tạo chiều sâu
-                    splashColor:
-                        Colors.tealAccent, // Hiệu ứng gợn sóng khi nhấn
-                    child: shoreBird.isCheckingForUpdate.value
-                        ? const _LoadingIndicator()
-                        : const Icon(
-                            Icons.update,
-                            color: Colors.white,
-                            size: 30,
-                          ),
-                  )
-                : const SizedBox(),
-          ),
-        ),
+        // Container(
+        //   margin: EdgeInsets.only(bottom: 10),
+        //   child: Obx(
+        //     () => shoreBird.isShorebirdAvailable.value
+        //         ? FloatingActionButton(
+        //             tooltip: 'Check update',
+        //             onPressed: () => shoreBird.isCheckingForUpdate.value
+        //                 ? null
+        //                 : shoreBird.checkForUpdate(context),
+        //             backgroundColor:
+        //                 homeController.colorApp.value, // Màu nền hiện đại
+        //             shape: RoundedRectangleBorder(
+        //               borderRadius:
+        //                   BorderRadius.circular(15), // Bo góc nút cho mềm mại
+        //             ),
+        //             elevation: 8, // Đổ bóng tạo chiều sâu
+        //             splashColor:
+        //                 Colors.tealAccent, // Hiệu ứng gợn sóng khi nhấn
+        //             child: shoreBird.isCheckingForUpdate.value
+        //                 ? const _LoadingIndicator()
+        //                 : const Icon(
+        //                     Icons.update,
+        //                     color: Colors.white,
+        //                     size: 30,
+        //                   ),
+        //           )
+        //         : const SizedBox(),
+        //   ),
+        // ),
         FloatingActionButton(
           onPressed: () {
             _showBottomSheet(context);
@@ -160,7 +159,7 @@ class ExpenseTracker extends StatelessWidget {
           child: Icon(
             Icons.attach_money,
             size: 30, // Kích thước biểu tượng lớn để dễ nhìn
-            color: Colors.white, // Màu biểu tượng
+            color: Colors.pink, // Màu biểu tượng
           ),
           tooltip: 'Thêm chi tiêu', // Tooltip khi giữ nút
         ),
