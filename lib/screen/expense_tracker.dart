@@ -4,6 +4,7 @@ import 'package:dept_book/model.dart';
 import 'package:dept_book/screen/add_expense_section.dart';
 import 'package:dept_book/screen/build_drawer.dart';
 import 'package:dept_book/screen/details.dart';
+import 'package:dept_book/screen/widgets/pie_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
@@ -56,6 +57,7 @@ class ExpenseTracker extends StatelessWidget {
             child: Column(
               children: [
                 Expanded(
+                  flex: 3,
                   child: Obx(() {
                     if (expenseController.people.isEmpty) {
                       return const Center(
@@ -66,7 +68,7 @@ class ExpenseTracker extends StatelessWidget {
                         ),
                       );
                     }
-
+                
                     return ListView.builder(
                       itemCount: expenseController.people.length,
                       itemBuilder: (context, index) {
@@ -88,6 +90,14 @@ class ExpenseTracker extends StatelessWidget {
                     );
                   }),
                 ),
+                // chart
+                Expanded(
+                    flex: 2,
+                    child: Center(
+                      child: SizedBox(
+                          width: 200, height: 200, child: BuilPieChart()),
+                    )),
+                
                 Container(
                   margin: EdgeInsets.all(20),
                   child: Row(

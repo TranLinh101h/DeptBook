@@ -38,14 +38,20 @@ class Expense {
   final String id;
   String description;
   double amount;
+  String? dateCreated;
 
-  Expense({required this.id, required this.description, required this.amount});
+  Expense(
+      {required this.id,
+      required this.description,
+      required this.amount,
+      this.dateCreated});
 
   factory Expense.fromJson(Map<String, dynamic> json) {
     return Expense(
       id: json['id'],
       description: json['description'],
       amount: json['amount'],
+      dateCreated: json['dateCreated'] ?? "",
     );
   }
 
@@ -54,6 +60,7 @@ class Expense {
       'id': id,
       'description': description,
       'amount': amount,
+      'dateCreated': dateCreated ?? '',
     };
   }
 }

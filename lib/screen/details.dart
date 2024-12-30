@@ -18,6 +18,20 @@ class PersonDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(
             'Chi tiết chi tiêu: ${expenseController.people.value[indexPerson].name}'),
+        actions: [
+          Obx(
+            () => expenseController.people.value[indexPerson].expenses.isEmpty
+                ? SizedBox()
+                : IconButton(
+                    onPressed: () => _confirmDelete(context, personId),
+                    icon: Icon(
+                      Icons.delete_sweep,
+                      color: Colors.red,
+                      size: 30,
+                    ),
+                  ),
+          ),
+        ],
       ),
       body: Obx(
         () => Stack(
@@ -48,8 +62,14 @@ class PersonDetailScreen extends StatelessWidget {
                       color: Colors.white.withOpacity(0.6),
                       child: ListTile(
                         title: Text(expense.description),
-                        subtitle: Text(
-                            'Số tiền: ${expense.amount.toStringAsFixed(2)}'),
+                        subtitle: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                                'Số tiền: ${expense.amount.toStringAsFixed(2)}'),
+                            Text(expense.dateCreated ?? ''),
+                          ],
+                        ),
                         trailing: IconButton(
                           icon: Icon(Icons.delete),
                           onPressed: () => expenseController.deleteExpense(
@@ -57,10 +77,10 @@ class PersonDetailScreen extends StatelessWidget {
                               expense.id),
                         ),
                         onTap: () {
-                          _showEditExpenseDialog(
-                              context,
-                              expenseController.people.value[indexPerson].id,
-                              expense);
+                          // _showEditExpenseDialog(
+                          //     context,
+                          //     expenseController.people.value[indexPerson].id,
+                          //     expense);
                         },
                       ),
                     );
@@ -113,6 +133,35 @@ class PersonDetailScreen extends StatelessWidget {
                 Navigator.pop(context); // Đóng dialog sau khi sửa xong
               },
               child: Text('Lưu'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Xác nhận xóa
+  void _confirmDelete(BuildContext context, String id) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Xóa Tất Cả?'),
+          content: Text('Xác nhận xoá tất cả chi tiết?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Hủy'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                expenseController
+                    .deleteExpensePerson(id); // Xóa người và chi tiêu liên quan
+                Navigator.pop(context); // Đóng dialog
+              },
+              child: Text('Xóa'),
             ),
           ],
         );
