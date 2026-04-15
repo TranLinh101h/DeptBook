@@ -53,7 +53,7 @@ class ExpenseController extends GetxController {
   }
 
   void deleteExpensePerson(String id) {
-    for (var element in people.value) {
+    for (var element in people) {
       if (element.id == id) {
         element.balance = 0;
         element.expenses.clear();

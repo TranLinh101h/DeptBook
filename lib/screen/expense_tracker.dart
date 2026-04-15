@@ -8,7 +8,6 @@ import 'package:dept_book/screen/widgets/pie_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:uuid/uuid.dart';
-import '../shore_bird_service.dart';
 
 class ExpenseTracker extends StatelessWidget {
   final ExpenseController expenseController = Get.put(ExpenseController());
@@ -16,16 +15,19 @@ class ExpenseTracker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var homeController = Get.find<HomeController>();
-    var shoreBird = Get.put(ShoreBirdService());
-    shoreBird.checkForUpdate(context, showError: false);
+    // var shoreBird = Get.put(ShoreBirdService());
+    // shoreBird.checkForUpdate(context, showError: false);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text('Quản lý chi tiêu'),
+        title: const Text(
+          'Quản lý chi tiêu',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
         actions: [
           IconButton(
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.person_add_alt_1_rounded),
             onPressed: () =>
                 _showAddPersonDialog(context), // Gọi dialog để thêm người
             tooltip: "Thêm người",
@@ -34,7 +36,6 @@ class ExpenseTracker extends StatelessWidget {
       ),
       drawer: BuildDrawer(expenseController: expenseController),
       floatingActionButton: _buildFloatingActionButton(
-        shoreBird,
         context,
         homeController,
       ), // Menu Drawer hiển thị danh sách người
@@ -54,66 +55,162 @@ class ExpenseTracker extends StatelessWidget {
             return SizedBox();
           }),
           SafeArea(
-            child: Column(
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: Obx(() {
-                    if (expenseController.people.isEmpty) {
-                      return const Center(
-                        child: Text(
-                          "Không có người dùng, nhấn + để thêm.",
-                          style: TextStyle(
-                              color: Colors.blue, fontWeight: FontWeight.bold),
-                        ),
-                      );
-                    }
-                
-                    return ListView.builder(
-                      itemCount: expenseController.people.length,
-                      itemBuilder: (context, index) {
-                        var person = expenseController.people[index];
-                        return Card(
-                          color: Colors.white.withOpacity(0.6),
-                          child: ListTile(
-                            title: Text(person.name),
-                            subtitle: Text(
-                                'Số dư: ${person.balance.toStringAsFixed(2)}'),
-                            onTap: () {
-                              // Mở chi tiết chi tiêu của người này
-                              Get.to(() =>
-                                  PersonDetailScreen(personId: person.id));
-                            },
-                          ),
-                        );
-                      },
-                    );
-                  }),
-                ),
-                // chart
-                Expanded(
-                    flex: 2,
-                    child: Center(
-                      child: SizedBox(
-                          width: 200, height: 200, child: BuilPieChart()),
-                    )),
-                
-                Container(
-                  margin: EdgeInsets.all(20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Obx(
-                        () => Text(
-                          "V1.0.4 Patch ${shoreBird.currentPatchVersion.value}",
-                          style: TextStyle(
-                              color: Colors.blue, fontWeight: FontWeight.bold),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+              child: Column(
+                children: [
+                  Obx(
+                    () => Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(18),
+                        color: Colors.white.withOpacity(0.86),
+                        border: Border.all(
+                          color: homeController.colorApp.value.withOpacity(0.2),
                         ),
                       ),
-                    ],
+                      child: Row(
+                        children: [
+                          Container(
+                            height: 42,
+                            width: 42,
+                            decoration: BoxDecoration(
+                              color: homeController.colorApp.value
+                                  .withOpacity(0.16),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              Icons.groups_2_rounded,
+                              color: homeController.colorApp.value,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              'Tổng số người: ${expenseController.people.length}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                )
-              ],
+                  const SizedBox(height: 10),
+                  Expanded(
+                    flex: 3,
+                    child: Obx(() {
+                      if (expenseController.people.isEmpty) {
+                        return Center(
+                          child: Container(
+                            padding: const EdgeInsets.all(18),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.84),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: const Text(
+                              'Không có người dùng, nhấn nút + để thêm.',
+                              style: TextStyle(
+                                color: Colors.blueGrey,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+
+                      return ListView.builder(
+                        itemCount: expenseController.people.length,
+                        itemBuilder: (context, index) {
+                          var person = expenseController.people[index];
+                          final balance = person.balance;
+                          return Card(
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 6,
+                              ),
+                              leading: CircleAvatar(
+                                backgroundColor: homeController.colorApp.value
+                                    .withOpacity(0.16),
+                                child: Text(
+                                  person.name.characters.first.toUpperCase(),
+                                  style: TextStyle(
+                                    color: homeController.colorApp.value,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              title: Text(
+                                person.name,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w700),
+                              ),
+                              subtitle: Text(
+                                'Số dư: ${balance.toStringAsFixed(2)}',
+                                style: TextStyle(
+                                  color: balance >= 0
+                                      ? Colors.green.shade700
+                                      : Colors.red.shade700,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              trailing: const Icon(Icons.chevron_right_rounded),
+                              onTap: () {
+                                Get.to(() =>
+                                    PersonDetailScreen(personId: person.id));
+                              },
+                            ),
+                          );
+                        },
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 6),
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.86),
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(
+                          color: homeController.colorApp.value.withOpacity(0.2),
+                        ),
+                      ),
+                      child: const Center(
+                        child: SizedBox(
+                          width: 210,
+                          height: 210,
+                          child: BuilPieChart(),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Container(
+                  //   margin: EdgeInsets.all(20),
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.center,
+                  //     children: [
+                  //       Obx(
+                  //         () => Text(
+                  //           "V1.0.4 Patch ${shoreBird.currentPatchVersion.value}",
+                  //           style: TextStyle(
+                  //               color: Colors.blue, fontWeight: FontWeight.bold),
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // )
+                ],
+              ),
             ),
           ),
         ],
@@ -121,7 +218,7 @@ class ExpenseTracker extends StatelessWidget {
     );
   }
 
-  Column _buildFloatingActionButton(ShoreBirdService shoreBird,
+  Column _buildFloatingActionButton(
       BuildContext context, HomeController homeController) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -160,78 +257,79 @@ class ExpenseTracker extends StatelessWidget {
           onPressed: () {
             _showBottomSheet(context);
           },
-          backgroundColor: homeController.colorApp.value, // Màu nền hiện đại
+          backgroundColor: homeController.colorApp.value,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15), // Bo góc nút cho mềm mại
+            borderRadius: BorderRadius.circular(18),
           ),
-          elevation: 8, // Đổ bóng tạo chiều sâu
-          splashColor: Colors.tealAccent, // Hiệu ứng gợn sóng khi nhấn
-          child: Icon(
+          elevation: 6,
+          splashColor: Colors.tealAccent,
+          child: const Icon(
             Icons.attach_money,
-            size: 30, // Kích thước biểu tượng lớn để dễ nhìn
-            color: Colors.pink, // Màu biểu tượng
+            size: 30,
+            color: Colors.white,
           ),
-          tooltip: 'Thêm chi tiêu', // Tooltip khi giữ nút
+          tooltip: 'Thêm chi tiêu',
         ),
       ],
     );
   }
 
   void _showBottomSheet(BuildContext context) {
+    final borderColor =
+        Theme.of(context).drawerTheme.backgroundColor!.withOpacity(0.28);
     showModalBottomSheet(
-      barrierColor: Colors.transparent,
+      barrierColor: Colors.black26,
       context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (context) => FractionallySizedBox(
-        heightFactor: 0.99, // Chiều cao nửa màn hình
+        heightFactor: 0.94,
         child: Container(
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(15),
                 topRight: Radius.circular(15),
               ),
               border: Border(
                 top: BorderSide(
                   width: 3,
-                  color: Theme.of(context).drawerTheme.backgroundColor!,
+                  color: borderColor,
                 ),
               ),
-              color: Theme.of(context)
-                  .drawerTheme
-                  .backgroundColor!
-                  .withOpacity(0.5)),
+              color: Colors.white.withOpacity(0.96)),
           child: AddExpenseSection(
             expenseController: expenseController,
           ),
-        ), // Thành phần thêm chi tiêu
+        ),
       ),
     );
   }
 
   // Dialog để thêm người mới
   void _showAddPersonDialog(BuildContext context) {
-    final TextEditingController _nameController = TextEditingController();
+    final TextEditingController nameController = TextEditingController();
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Thêm người mới'),
+          title: const Text('Thêm người mới'),
           content: TextField(
-            controller: _nameController,
-            decoration: InputDecoration(hintText: 'Tên người dùng'),
+            controller: nameController,
+            decoration: const InputDecoration(hintText: 'Tên người dùng'),
           ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('Hủy'),
+              child: const Text('Hủy'),
             ),
             ElevatedButton(
               onPressed: () {
-                if (_nameController.text.isNotEmpty) {
+                if (nameController.text.isNotEmpty) {
                   var person = Person(
                     id: Uuid().v4(),
-                    name: _nameController.text,
+                    name: nameController.text,
                     expenses: [],
                   );
                   expenseController
@@ -239,7 +337,7 @@ class ExpenseTracker extends StatelessWidget {
                   Navigator.pop(context); // Đóng dialog sau khi thêm
                 }
               },
-              child: Text('Thêm'),
+              child: const Text('Thêm'),
             ),
           ],
         );
@@ -248,17 +346,4 @@ class ExpenseTracker extends StatelessWidget {
   }
 
   // Phần thêm chi tiêu vào màn hình chính
-}
-
-class _LoadingIndicator extends StatelessWidget {
-  const _LoadingIndicator();
-
-  @override
-  Widget build(BuildContext context) {
-    return const SizedBox(
-      height: 14,
-      width: 14,
-      child: CircularProgressIndicator(strokeWidth: 2),
-    );
-  }
 }

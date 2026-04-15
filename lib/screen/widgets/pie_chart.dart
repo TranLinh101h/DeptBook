@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:dept_book/business_logic.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +20,24 @@ class BuilPieChartState extends State {
     AppColors.contentColorYellow,
     Colors.deepOrangeAccent,
     Colors.green.shade800,
-    Color(0xFF50E4FF),
-    Color(0xFFE80054)
+    const Color(0xFF50E4FF),
+    const Color(0xFFE80054),
+
+    // Additional colors:
+    Colors.indigo, // deep purple-blue
+    Colors.teal.shade700, // rich teal
+    Colors.redAccent.shade700, // strong red
+    Colors.blueGrey.shade800, // dark bluish grey
+    const Color(0xFF6A1B9A), // deep purple
+    const Color(0xFFD84315), // burnt orange
+    const Color(0xFF2E7D32), // dark green
+    const Color(0xFF00897B), // teal
+    const Color(0xFF303F9F), // dark indigo
+    const Color(0xFF5D4037), // dark brown
+    const Color(0xFF7B1FA2), // deep violet
+    const Color(0xFFC2185B), // dark pink
+    const Color(0xFF00695C), // cyan-green
+    const Color(0xFF1A237E), // very dark blue
   ];
 
   @override
@@ -56,28 +70,29 @@ class BuilPieChartState extends State {
                     show: false,
                   ),
                   sectionsSpace: 1,
-                  centerSpaceRadius: 30,
+                  centerSpaceRadius: 34,
                   sections: List.generate(
-                    expenseController.people.value.length,
+                    expenseController.people.length,
                     (i) {
                       final isTouched = i == touchedIndex;
-                      var people = expenseController.people.value[i];
-                      final color = listColor[Random().nextInt(6)];
-                      final total = expenseController.people.value
+                      var people = expenseController.people[i];
+                      final color = listColor[i % listColor.length];
+                      final total = expenseController.people
                           .map((element) => element.balance)
                           .reduce((value, element) => value + element);
-                      final percent =
-                          (people.balance / total * 100).roundToDouble();
+                      final percent = total == 0
+                          ? 0.0
+                          : (people.balance / total * 100).roundToDouble();
 
                       return PieChartSectionData(
                         color: color,
                         value: percent,
-                        title: "$percent%\n${people.name.toString()}",
-                        titleStyle: TextStyle(
+                        title: "$percent%\n${people.name}",
+                        titleStyle: const TextStyle(
                             color: Colors.white,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold),
-                        radius: 100,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700),
+                        radius: isTouched ? 104 : 98,
                         titlePositionPercentageOffset: 0.55,
                         borderSide: isTouched
                             ? const BorderSide(
